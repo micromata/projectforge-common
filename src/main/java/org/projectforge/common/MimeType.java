@@ -1,0 +1,68 @@
+/////////////////////////////////////////////////////////////////////////////
+//
+// Project   ProjectForge
+//
+// Copyright 2001-2009, Micromata GmbH, Kai Reinhard
+//           All rights reserved.
+//
+/////////////////////////////////////////////////////////////////////////////
+
+package org.projectforge.common;
+
+/**
+ * Determines the mime-types of files by the file-name's extension.
+ * @author Kai Reinhard (k.reinhard@micromata.de)
+ * 
+ */
+public enum MimeType
+{
+  // See e. g.: http://de.selfhtml.org/diverses/mimetypen.htm
+  DOC("application/vnd.ms-word", "doc", "docx"), GZIP("application/gzip", "gz"), JPG("image/jpeg", "jpg", "jpeg"), //
+  MS_PROJECT("application/vnd.ms-project", "mpx"), // OCTET_STREAM("application/octet-stream"),
+  PDF("application/pdf", "pdf"), PNG("image/png", "png"), SVG("image/svg+xml", "svg"), TEXT("text", "txt", "csv"), VCARD("text/x-vcard",
+      "vcf"), //
+      XLS("application/vnd.ms-excel", "xls"), XML("application/xml", "xml"), ZIP("application/zip", "zip");
+
+  private String mimeType;
+
+  private String[] extensions;
+
+  private MimeType(final String mimeType, final String... extensions)
+  {
+    this.mimeType = mimeType;
+    this.extensions = extensions;
+  }
+
+  /**
+   * "application/pdf", "application/xml" etc.
+   * @return
+   */
+  public String getMimeTypeString()
+  {
+    return mimeType;
+  }
+
+  public static MimeType getMimeType(final String filename)
+  {
+    if (filename == null) {
+      return null;
+    }
+    final int pos = filename.lastIndexOf('.');
+    if (pos < 0 || pos + 1 == filename.length()) {
+      return null;
+    }
+    final String extensionString = filename.substring(pos + 1);
+    for (final MimeType type : MimeType.values()) {
+      final String[] extensions = type.extensions;
+      if (extensionString == null) {
+        continue;
+      }
+      for (final String extension : extensions) {
+        if (extensionString.equals(extension) == true) {
+          return type;
+        }
+      }
+    }
+    return null;
+  }
+}
