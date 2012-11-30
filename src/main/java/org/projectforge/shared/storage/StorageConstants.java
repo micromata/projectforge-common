@@ -1,4 +1,4 @@
-package org.projectforge.shared;
+package org.projectforge.shared.storage;
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -28,11 +28,13 @@ package org.projectforge.shared;
  * @author Kai Reinhard (k.reinhard@micromata.de)
  * 
  */
-public class SharedConstants
+public class StorageConstants
 {
-  public static final String STORAGE_CONFIG_FILE_NAME = "storageConfig.properties";
+  public static final String CONFIG_FILE_NAME = "storageConfig.properties";
 
-  public static final String STORAGE_PARAM_AUTHENTICATION_TOKEN = "authenticationToken";
+  public static final String PARAM_AUTHENTICATION_TOKEN = "authenticationToken";
 
-  public static final String STORAGE_PARAM_BASE_DIR = "baseDir";
+  public static final String PARAM_BASE_DIR = "baseDir";
+
+  public static final String SYSTEM_PROPERTY_URL = "storageUrl";
 }
