@@ -40,6 +40,8 @@ public class Version implements Comparable<Version>, Serializable
 
   private int majorRelease, minorRelease, patchLevel, buildNumber, betaVersion = Integer.MAX_VALUE;
 
+  private boolean snapshot;
+
   private String asString;
 
   /**
@@ -51,8 +53,18 @@ public class Version implements Comparable<Version>, Serializable
     if (version == null) {
       return;
     }
-    final int betaPos = version.indexOf('b');
-    final String str = betaPos >= 0 ? version.substring(0, betaPos) : version;
+    String str = version.toLowerCase();
+    final int snapshotPos = str.indexOf("-snapshot");
+    if (snapshotPos > 0) {
+      snapshot = true;
+      str = str.substring(0, snapshotPos);
+    }
+    final int betaPos = str.indexOf('b');
+    String betaString = null;
+    if (betaPos >= 0) {
+      betaString = str.substring(betaPos + 1);
+      str = str.substring(0, betaPos);
+    }
     final String[] sa = StringUtils.split(str, ".");
     if (sa.length > 0) {
       majorRelease = parseInt(version, sa[0]);
@@ -66,9 +78,9 @@ public class Version implements Comparable<Version>, Serializable
         }
       }
     }
-    if (betaPos >= 0) {
-      if (betaPos < version.length()) {
-        betaVersion = parseInt(version, version.substring(betaPos + 1));
+    if (betaString != null) {
+      if (betaString.length() > 0) {
+        betaVersion = parseInt(version, betaString);
       } else {
         betaVersion = 0;
       }
@@ -136,6 +148,14 @@ public class Version implements Comparable<Version>, Serializable
   }
 
   /**
+   * @return the snapshot
+   */
+  public boolean isSnapshot()
+  {
+    return snapshot;
+  }
+
+  /**
    * Compares major, minor, patch and build number.
    * @see java.lang.Comparable#compareTo(java.lang.Object)
    */
@@ -184,6 +204,9 @@ public class Version implements Comparable<Version>, Serializable
     }
     if (betaVersion < Integer.MAX_VALUE) {
       sb.append('b').append(betaVersion);
+    }
+    if (snapshot == true) {
+      sb.append("-SNAPSHOT");
     }
     asString = sb.toString();
   }
