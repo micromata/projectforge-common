@@ -1,19 +1,9 @@
-package org.projectforge.shared.storage;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-
-import org.apache.commons.io.IOUtils;
-
 /////////////////////////////////////////////////////////////////////////////
 //
 // Project ProjectForge Community Edition
 //         www.projectforge.org
 //
-// Copyright (C) 2001-2012 Kai Reinhard (k.reinhard@micromata.com)
+// Copyright (C) 2001-2012 Kai Reinhard (k.reinhard@micromata.de)
 //
 // ProjectForge is dual-licensed.
 //
@@ -30,6 +20,16 @@ import org.apache.commons.io.IOUtils;
 // with this program; if not, see http://www.gnu.org/licenses/.
 //
 /////////////////////////////////////////////////////////////////////////////
+
+package org.projectforge.shared.storage;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+
+import org.apache.commons.io.IOUtils;
 
 /**
  * Some helper methods used by different packages of ProjectForge.

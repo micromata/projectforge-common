@@ -1,10 +1,9 @@
-package org.projectforge;
 /////////////////////////////////////////////////////////////////////////////
 //
 // Project ProjectForge Community Edition
 //         www.projectforge.org
 //
-// Copyright (C) 2001-2012 Kai Reinhard (k.reinhard@micromata.com)
+// Copyright (C) 2001-2012 Kai Reinhard (k.reinhard@micromata.de)
 //
 // ProjectForge is dual-licensed.
 //
@@ -22,7 +21,7 @@ package org.projectforge;
 //
 /////////////////////////////////////////////////////////////////////////////
 
-
+package org.projectforge;
 
 import java.io.Serializable;
 
