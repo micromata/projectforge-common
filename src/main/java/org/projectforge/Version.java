@@ -38,7 +38,8 @@ public class Version implements Comparable<Version>, Serializable
 
   private static final org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(Version.class);
 
-  private int majorRelease, minorRelease, patchLevel, buildNumber, betaVersion = Integer.MAX_VALUE;
+  private int majorRelease, minorRelease, patchLevel, buildNumber, betaVersion = Integer.MAX_VALUE,
+      releaseCandidateVersion = Integer.MAX_VALUE;
 
   private boolean snapshot;
 
@@ -61,9 +62,16 @@ public class Version implements Comparable<Version>, Serializable
     }
     final int betaPos = str.indexOf('b');
     String betaString = null;
+    String releaseCandidateString = null;
     if (betaPos >= 0) {
       betaString = str.substring(betaPos + 1);
       str = str.substring(0, betaPos);
+    } else {
+      final int rcPos = str.indexOf("rc");
+      if (rcPos >= 0) {
+        releaseCandidateString = str.substring(rcPos + 2);
+        str = str.substring(0, rcPos);
+      }
     }
     final String[] sa = StringUtils.split(str, ".");
     if (sa.length > 0) {
@@ -83,6 +91,13 @@ public class Version implements Comparable<Version>, Serializable
         betaVersion = parseInt(version, betaString);
       } else {
         betaVersion = 0;
+      }
+    }
+    if (releaseCandidateString != null) {
+      if (releaseCandidateString.length() > 0) {
+        releaseCandidateVersion = parseInt(version, releaseCandidateString);
+      } else {
+        releaseCandidateVersion = 0;
       }
     }
     asString();
@@ -148,6 +163,29 @@ public class Version implements Comparable<Version>, Serializable
   }
 
   /**
+   * @return the releaseCandidateVersion
+   */
+  public int getReleaseCandidateVersion()
+  {
+    return releaseCandidateVersion;
+  }
+
+  /**
+   * @param releaseCandidateVersion the releaseCandidateVersion to set
+   * @return this for chaining.
+   */
+  public Version setReleaseCandidateVersion(final int releaseCandidateVersion)
+  {
+    this.releaseCandidateVersion = releaseCandidateVersion;
+    return this;
+  }
+
+  public boolean isReleaseCandidate()
+  {
+    return releaseCandidateVersion < Integer.MAX_VALUE;
+  }
+
+  /**
    * @return the snapshot
    */
   public boolean isSnapshot()
@@ -178,7 +216,39 @@ public class Version implements Comparable<Version>, Serializable
     if (compare != 0) {
       return compare;
     }
-    return compare(this.betaVersion, o.betaVersion);
+    if (this.isReleaseCandidate() == true) {
+      if (o.isReleaseCandidate() == true) {
+        return compare(this.releaseCandidateVersion, o.releaseCandidateVersion);
+      } else if (o.isBeta() == true) {
+        // RC is higher than beta.
+        return 1;
+      } else {
+        // RC is lower than normal version.
+        return -1;
+      }
+    }
+    if (o.isReleaseCandidate() == true) {
+      if (this.isBeta() == true) {
+        // beta is lower than RC.
+        return -1;
+      } else {
+        // normal version is higher than RC.
+        return 1;
+      }
+    }
+    if (this.isBeta() == true) {
+      if (o.isBeta() == true) {
+        return compare(this.betaVersion, o.betaVersion);
+      } else {
+        // beta is lower than normal version.
+        return -1;
+      }
+    }
+    if (o.isBeta() == true) {
+      // normal is higher than beta.
+      return 1;
+    }
+    return 0;
   }
 
   /**
@@ -204,6 +274,8 @@ public class Version implements Comparable<Version>, Serializable
     }
     if (betaVersion < Integer.MAX_VALUE) {
       sb.append('b').append(betaVersion);
+    } else if (releaseCandidateVersion < Integer.MAX_VALUE) {
+      sb.append("rc").append(releaseCandidateVersion);
     }
     if (snapshot == true) {
       sb.append("-SNAPSHOT");

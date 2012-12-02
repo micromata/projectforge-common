@@ -29,7 +29,6 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.projectforge.Version;
 
 public class VersionTest
 {
@@ -56,6 +55,23 @@ public class VersionTest
     final Version v1_2b2 = new Version("1.2b2");
     compare(v1_2b, v1_2);
     compare(v1_2b, v1_2b2);
+
+    final Version v1_2rc = new Version("1.2rc");
+    final Version v1_2rc2 = new Version("1.2rc2");
+    compare(v1_2rc, v1_2);
+    compare(v1_2rc, v1_2rc2);
+
+    compare("1.2rc1", "1.2");
+    compare("1.2b1", "1.2");
+    compare("1.2b1", "1.2rc1");
+
+    compare("1.2rc1", "1.2rc2");
+    compare("1.2b1", "1.2b2");
+  }
+
+  private void compare(final String v1, final String v2)
+  {
+    compare(new Version(v1), new Version(v2));
   }
 
   private void compare(final Version v1, final Version v2)
@@ -73,7 +89,8 @@ public class VersionTest
   }
 
   @Test
-  public void testSnapshot() {
+  public void testSnapshot()
+  {
     Version version = new Version("3.1.5b2");
     assertEquals("3.1.5b2", version.toString());
     Assert.assertFalse(version.isSnapshot());
@@ -104,5 +121,11 @@ public class VersionTest
     assertTrue(new Version("3.5.4.1b4").isBeta());
     assertTrue(new Version("3.5.4.1b").isBeta());
     assertFalse(new Version("3.5.4.1").isBeta());
+
+    assertEquals("3.5.4.1rc1", new Version("3.5.4.1rc1").toString());
+    assertEquals("3.5.4.1rc0", new Version("3.5.4.1rc").toString());
+    assertTrue(new Version("3.5.4.1rc4").isReleaseCandidate());
+    assertTrue(new Version("3.5.4.1rc").isReleaseCandidate());
+    assertFalse(new Version("3.5.4.1").isReleaseCandidate());
   }
 }
