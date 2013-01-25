@@ -17,12 +17,10 @@ public class ProjectForgeVersion
 
   public static final String YEAR = "2013";
 
-  public static final Version VERSION = new Version("4.2.1-SNAPSHOT");
+  public static final String VERSION_STRING = "4.3";
 
-  public static final String NUMBER = VERSION.toString();
+  public static final String RELEASE_DATE = "2013-01-26";
 
-  public static final String RELEASE_DATE = "2013-01-01";
-
-  public static final String RELEASE_TIMESTAMP = "2013-01-01 22:34";
+  public static final String RELEASE_TIMESTAMP = "2013-01-26 00:34";
 
 }
