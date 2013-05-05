@@ -25,7 +25,33 @@ package org.projectforge.common;
 
 public enum DatabaseDialect
 {
-  PostgreSQL, HSQL,
+  PostgreSQL("org.hibernate.dialect.PostgreSQLDialect"), HSQL("org.hibernate.dialect.HSQLDialect");
   // Not yet supported:
-  MYSQL, ORACLE, MS_SQL_SERVER, DB2, INFORMIX, DERBY, UNKOWN;
+  // MYSQL, ORACLE, MS_SQL_SERVER, DB2, INFORMIX, DERBY, UNKOWN;
+
+  private String asString;
+
+  public static DatabaseDialect fromString(final String asString)
+  {
+    if (PostgreSQL.asString.equals(asString) == true) {
+      return PostgreSQL;
+    }
+    if (HSQL.asString.equals(asString) == true) {
+      return HSQL;
+    }
+    return null;
+  }
+
+  /**
+   * @return the asString
+   */
+  public String getAsString()
+  {
+    return asString;
+  }
+
+  private DatabaseDialect(final String asString)
+  {
+    this.asString = asString;
+  }
 }
