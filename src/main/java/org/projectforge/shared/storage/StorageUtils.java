@@ -23,13 +23,13 @@
 
 package org.projectforge.shared.storage;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-
-import org.apache.commons.io.IOUtils;
+import java.io.Reader;
 
 /**
  * Some helper methods used by different packages of ProjectForge.
@@ -51,7 +51,13 @@ public class StorageUtils
       log.error(msg, ex);
       throw new RuntimeException(msg);
     } finally {
-      IOUtils.closeQuietly(writer);
+      if (writer != null) {
+        try {
+          writer.close();
+        } catch (final IOException ex) {
+          // Close quietly.
+        }
+      }
     }
   }
 
@@ -60,7 +66,12 @@ public class StorageUtils
     FileReader reader = null;
     try {
       reader = new FileReader(file);
-      final String authenticationToken = IOUtils.toString(reader);
+      final BufferedReader br = new BufferedReader(reader);
+      String s;
+      while ((s = br.readLine()) != null) {
+        System.out.println(s);
+      }
+      final String authenticationToken = readString(reader);
       return authenticationToken != null ? authenticationToken.trim() : null;
     } catch (final FileNotFoundException ex) {
       final String msg = "Error while reading '" + file.getAbsolutePath() + "': " + ex.getMessage();
@@ -71,7 +82,33 @@ public class StorageUtils
       log.error(msg, ex);
       throw new RuntimeException(msg);
     } finally {
-      IOUtils.closeQuietly(reader);
+      if (reader != null) {
+        try {
+          reader.close();
+        } catch (final IOException ex) {
+          // Close quietly.
+        }
+      }
     }
+  }
+
+  private static String readString(final Reader is) throws IOException
+  {
+    final StringBuilder sb = new StringBuilder();
+    BufferedReader br = null;
+    try {
+      String line;
+      br = new BufferedReader(is);
+      while ((line = br.readLine()) != null) {
+        sb.append(line);
+      }
+    } finally {
+      if (br != null) {
+        br.close();
+      }
+    }
+
+    return sb.toString();
+
   }
 }
