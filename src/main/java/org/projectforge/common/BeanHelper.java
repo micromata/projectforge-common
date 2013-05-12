@@ -32,11 +32,10 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
@@ -432,7 +431,7 @@ public class BeanHelper
       return null;
     }
     if (value instanceof Collection< ? > == true) {
-      CollectionUtils.get(value, index);
+      return get((Collection<?>)value, index);
     } else if (value.getClass().isArray() == true) {
       return Array.get(value, index);
     }
@@ -568,7 +567,7 @@ public class BeanHelper
       if (srcValue != null && srcValue instanceof Collection) {
         final Collection<Object> srcColl = (Collection<Object>) srcValue;
         final Collection<Object> destColl = (Collection<Object>) destValue;
-        if (ListUtils.isEqualList(srcColl, destColl) == false) {
+        if (isEqualList(srcColl, destColl) == false) {
           modified = true;
           BeanHelper.setProperty(dest, property, srcValue);
         }
@@ -595,5 +594,43 @@ public class BeanHelper
       }
     }
     return modified;
+  }
+
+  static boolean isEqualList(final Collection< ? > c1, final Collection< ? > c2)
+  {
+    if (c1 == c2) {
+      return true;
+    } else if (c1 == null) {
+      return false;
+    } else if (c2 == null) {
+      return false;
+    }
+    if (c1.size() != c2.size()) {
+      return false;
+    }
+    final Iterator< ? > it1 = c1.iterator();
+    final Iterator< ? > it2 = c2.iterator();
+    while (it1.hasNext() == true) {
+      final Object o1 = it1.next();
+      final Object o2 = it2.next();
+      if (o1 == o2) {
+        continue;
+      } else if (o1 == null) {
+        return false;
+      } else if (o2 == null) {
+        return false;
+      } else if (o1.equals(o2) == false) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  static Object get(final Collection<?> col, final int index) {
+    final Iterator<?> it = col.iterator();
+    for (int i = 0; i < index; i++) {
+      it.next();
+    }
+    return it.next();
   }
 }
