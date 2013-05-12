@@ -30,6 +30,8 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.lang.reflect.Method;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -150,6 +152,38 @@ public class BeanHelperTest
     src.setEnabled(false);
     assertTrue("dest should be modified.", BeanHelper.copyProperties(src, dest, "name", "enabled"));
     assertFalse(dest.isEnabled());
+  }
+
+  @Test
+  public void get()
+  {
+    final List<Integer> list = new LinkedList<Integer>();
+    list.add(0);
+    assertEquals(0, BeanHelper.get(list, 0));
+    list.add(1);
+    assertEquals(0, BeanHelper.get(list, 0));
+    assertEquals(1, BeanHelper.get(list, 1));
+  }
+
+  @Test
+  public void isListEquals()
+  {
+    final List<Integer> l1 = new LinkedList<Integer>();
+    final List<Integer> l2 = new LinkedList<Integer>();
+    assertTrue(BeanHelper.isEqualList(null, null));
+    assertFalse(BeanHelper.isEqualList(null, l2));
+    assertFalse(BeanHelper.isEqualList(l1, null));
+    assertTrue(BeanHelper.isEqualList(l1, l2));
+    l1.add(0);
+    assertFalse(BeanHelper.isEqualList(l1, l2));
+    l2.add(0);
+    assertTrue(BeanHelper.isEqualList(l1, l2));
+    l1.add(1);
+    l2.add(1);
+    assertTrue(BeanHelper.isEqualList(l1, l2));
+    l1.add(2);
+    l2.add(3);
+    assertFalse(BeanHelper.isEqualList(l1, l2));
   }
 
   public String getName()
