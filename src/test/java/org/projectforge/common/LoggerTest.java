@@ -41,6 +41,10 @@ public class LoggerTest
 
   private void doLog() {
     final Logger log = Logger.getLogger(LoggerTest.class);
+    if (log.isDebugEnabled() == true) {
+      log.debug("Debug message 1");
+    }
+    log.debug("Debug message 2");
     log.info("Info message");
     log.warn("Warning message");
     log.error("Error message");

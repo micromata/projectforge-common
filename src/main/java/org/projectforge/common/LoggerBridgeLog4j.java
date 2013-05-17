@@ -43,15 +43,31 @@ public class LoggerBridgeLog4j extends Logger
   }
 
   /**
+   * @see org.projectforge.common.Logger#isDebugEnabled()
+   */
+  @Override
+  public boolean isDebugEnabled()
+  {
+    return log.isDebugEnabled();
+  }
+
+  /**
    * @see org.projectforge.common.Logger#info(java.lang.Object)
-   * @see java.util.logging.Logger#info(String)
+   */
+  @Override
+  public void debug(final Object message)
+  {
+    log.debug(message);
+  }
+
+  /**
+   * @see org.projectforge.common.Logger#info(java.lang.Object)
    */
   @Override
   public void info(final Object message)
   {
     log.info(message);
   }
-
 
   /**
    * @see org.projectforge.common.Logger#warn(java.lang.Object)

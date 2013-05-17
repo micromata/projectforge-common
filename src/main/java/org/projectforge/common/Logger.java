@@ -56,6 +56,10 @@ public abstract class Logger
     return getLoggerBridge().getInternalLogger(clazz.getName());
   }
 
+  public abstract boolean isDebugEnabled();
+
+  public abstract void debug(Object message);
+
   public abstract void info(Object message);
 
   public abstract void warn(Object message);
