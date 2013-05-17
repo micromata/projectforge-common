@@ -34,6 +34,7 @@ import org.apache.log4j.Priority;
  */
 public class LoggerBridgeLog4j extends Logger
 {
+  // Ensuring that the class name of the caller class is used:
   static final String FQCN = LoggerBridgeLog4j.class.getName();
 
   private org.apache.log4j.Logger log;
@@ -127,8 +128,8 @@ public class LoggerBridgeLog4j extends Logger
    * @see org.projectforge.common.Logger#getInternalLogger(java.lang.String)
    */
   @Override
-  protected Logger getInternalLogger(final String name)
+  protected Logger getInternalLogger(final Class< ? > clazz)
   {
-    return new LoggerBridgeLog4j(org.apache.log4j.Logger.getLogger(name));
+    return new LoggerBridgeLog4j(org.apache.log4j.Logger.getLogger(clazz));
   }
 }

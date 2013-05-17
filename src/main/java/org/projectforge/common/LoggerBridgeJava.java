@@ -24,6 +24,7 @@
 package org.projectforge.common;
 
 import java.util.logging.Level;
+import java.util.logging.LogRecord;
 
 /**
  * Implementation of java standard logger.
@@ -34,6 +35,8 @@ import java.util.logging.Level;
 public class LoggerBridgeJava extends Logger
 {
   private java.util.logging.Logger logger;
+
+  private String sourceClass;
 
   public LoggerBridgeJava()
   {
@@ -121,16 +124,24 @@ public class LoggerBridgeJava extends Logger
    * @see org.projectforge.common.Logger#getInternalLogger(java.lang.String)
    */
   @Override
-  protected Logger getInternalLogger(final String name)
+  protected Logger getInternalLogger(final Class< ? > clazz)
   {
-    return new LoggerBridgeJava(java.util.logging.Logger.getLogger(name));
+    this.sourceClass = clazz.getName();
+    return new LoggerBridgeJava(java.util.logging.Logger.getLogger(clazz.getName()));
   }
 
-  private void log(final Level level, final Object message) {
+  private void log(final Level level, final Object message)
+  {
     logger.log(level, message != null ? message.toString() : null);
   }
 
-  private void log(final Level level, final Object message, final Throwable t) {
-    logger.log(level, message != null ? message.toString() : null, t);
+  private void log(final Level level, final Object message, final Throwable t)
+  {
+    final LogRecord logRecord = new LogRecord(level, message != null ? message.toString() : null);
+    logRecord.setSourceClassName(this.sourceClass);
+    if (t != null) {
+      logRecord.setThrown(t);
+    }
+    logger.log(logRecord);
   }
 }

@@ -53,7 +53,7 @@ public abstract class Logger
 
   static public Logger getLogger(final Class< ? > clazz)
   {
-    return getLoggerBridge().getInternalLogger(clazz.getName());
+    return getLoggerBridge().getInternalLogger(clazz);
   }
 
   public abstract boolean isDebugEnabled();
@@ -72,5 +72,5 @@ public abstract class Logger
 
   public abstract void fatal(Object message, Throwable t);
 
-  protected abstract Logger getInternalLogger(final String name);
+  protected abstract Logger getInternalLogger(final Class< ? > clazz);
 }
