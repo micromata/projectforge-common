@@ -31,6 +31,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 
+import org.projectforge.common.Logger;
+
 /**
  * Some helper methods used by different packages of ProjectForge.
  * @author Kai Reinhard (k.reinhard@micromata.de)
@@ -38,7 +40,7 @@ import java.io.Reader;
  */
 public class StorageUtils
 {
-  private static final org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(StorageUtils.class);
+  private static final Logger log = Logger.getLogger(StorageUtils.class);
 
   public static void writeDefaultStorageConfig(final File file, final String authenticationToken)
   {

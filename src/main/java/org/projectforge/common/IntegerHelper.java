@@ -31,7 +31,7 @@ package org.projectforge.common;
  */
 public class IntegerHelper
 {
-  private static final org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(IntegerHelper.class);
+  private static final Logger log = Logger.getLogger(IntegerHelper.class);
 
   /**
    * Parses the given string as integer value.

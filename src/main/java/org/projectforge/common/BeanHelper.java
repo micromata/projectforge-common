@@ -39,7 +39,6 @@ import java.util.List;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 
 /**
  * Some useful methods for determing and converting property, getter and setter names.
