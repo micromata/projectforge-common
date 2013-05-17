@@ -23,6 +23,9 @@
 
 package org.projectforge.common;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Priority;
+
 /**
  * Implementation of log4j.
  * 
@@ -31,6 +34,8 @@ package org.projectforge.common;
  */
 public class LoggerBridgeLog4j extends Logger
 {
+  static final String FQCN = LoggerBridgeLog4j.class.getName();
+
   private org.apache.log4j.Logger log;
 
   public LoggerBridgeLog4j()
@@ -57,7 +62,7 @@ public class LoggerBridgeLog4j extends Logger
   @Override
   public void debug(final Object message)
   {
-    log.debug(message);
+    log(Level.DEBUG, message, null);
   }
 
   /**
@@ -66,7 +71,7 @@ public class LoggerBridgeLog4j extends Logger
   @Override
   public void info(final Object message)
   {
-    log.info(message);
+    log(Level.INFO, message, null);
   }
 
   /**
@@ -75,7 +80,7 @@ public class LoggerBridgeLog4j extends Logger
   @Override
   public void warn(final Object message)
   {
-    log.warn(message);
+    log(Level.WARN, message, null);
   }
 
   /**
@@ -84,7 +89,7 @@ public class LoggerBridgeLog4j extends Logger
   @Override
   public void error(final Object message)
   {
-    log.error(message);
+    log(Level.ERROR, message, null);
   }
 
   /**
@@ -93,7 +98,7 @@ public class LoggerBridgeLog4j extends Logger
   @Override
   public void error(final Object message, final Throwable t)
   {
-    log.error(message, t);
+    log(Level.ERROR, message, t);
   }
 
   /**
@@ -102,7 +107,7 @@ public class LoggerBridgeLog4j extends Logger
   @Override
   public void fatal(final Object message)
   {
-    log.fatal(message);
+    log(Level.FATAL, message, null);
   }
 
   /**
@@ -111,7 +116,11 @@ public class LoggerBridgeLog4j extends Logger
   @Override
   public void fatal(final Object message, final Throwable t)
   {
-    log.fatal(message, t);
+    log(Level.FATAL, message, t);
+  }
+
+  private void log(final Priority priority, final Object message, final Throwable t) {
+    log.log(FQCN, priority, message, t);
   }
 
   /**
