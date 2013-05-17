@@ -42,9 +42,10 @@ public class LoggerBridgeJava extends Logger
   {
   }
 
-  public LoggerBridgeJava(final java.util.logging.Logger logger)
+  private LoggerBridgeJava(final Class< ? > clazz)
   {
-    this.logger = logger;
+    this.sourceClass = clazz.getName();
+    this.logger = java.util.logging.Logger.getLogger(this.sourceClass);
   }
 
   /**
@@ -126,13 +127,12 @@ public class LoggerBridgeJava extends Logger
   @Override
   protected Logger getInternalLogger(final Class< ? > clazz)
   {
-    this.sourceClass = clazz.getName();
-    return new LoggerBridgeJava(java.util.logging.Logger.getLogger(clazz.getName()));
+    return new LoggerBridgeJava(clazz);
   }
 
   private void log(final Level level, final Object message)
   {
-    logger.log(level, message != null ? message.toString() : null);
+    log(level, message, null);
   }
 
   private void log(final Level level, final Object message, final Throwable t)

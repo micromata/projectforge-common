@@ -43,9 +43,9 @@ public class LoggerBridgeLog4j extends Logger
   {
   }
 
-  public LoggerBridgeLog4j(final org.apache.log4j.Logger logger)
+  private LoggerBridgeLog4j(final Class<?> clazz)
   {
-    this.log = logger;
+    this.log = org.apache.log4j.Logger.getLogger(clazz);
   }
 
   /**
@@ -130,6 +130,6 @@ public class LoggerBridgeLog4j extends Logger
   @Override
   protected Logger getInternalLogger(final Class< ? > clazz)
   {
-    return new LoggerBridgeLog4j(org.apache.log4j.Logger.getLogger(clazz));
+    return new LoggerBridgeLog4j(clazz);
   }
 }
