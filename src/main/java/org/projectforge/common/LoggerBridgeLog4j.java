@@ -35,7 +35,7 @@ import org.apache.log4j.Priority;
 public class LoggerBridgeLog4j extends Logger
 {
   // Ensuring that the class name of the caller class is used:
-  static final String FQCN = LoggerBridgeLog4j.class.getName();
+  private static final String CALLER_FQCN = LoggerBridgeLog4j.class.getName();
 
   private org.apache.log4j.Logger log;
 
@@ -43,7 +43,7 @@ public class LoggerBridgeLog4j extends Logger
   {
   }
 
-  private LoggerBridgeLog4j(final Class<?> clazz)
+  private LoggerBridgeLog4j(final Class< ? > clazz)
   {
     this.log = org.apache.log4j.Logger.getLogger(clazz);
   }
@@ -120,8 +120,9 @@ public class LoggerBridgeLog4j extends Logger
     log(Level.FATAL, message, t);
   }
 
-  private void log(final Priority priority, final Object message, final Throwable t) {
-    log.log(FQCN, priority, message, t);
+  private void log(final Priority priority, final Object message, final Throwable t)
+  {
+    log.log(CALLER_FQCN, priority, message, t);
   }
 
   /**
