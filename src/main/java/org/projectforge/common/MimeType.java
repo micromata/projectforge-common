@@ -35,7 +35,7 @@ public enum MimeType
   MS_PROJECT("application/vnd.ms-project", "mpx"), // OCTET_STREAM("application/octet-stream"),
   PDF("application/pdf", "pdf"), PNG("image/png", "png"), SVG("image/svg+xml", "svg"), TEXT("text", "txt", "csv", "sql"), VCARD(
       "text/x-vcard", "vcf"), //
-      XLS("application/vnd.ms-excel", "xls"), XML("application/xml", "xml"), ZIP("application/zip", "zip");
+      XLS("application/vnd.ms-excel", "xls", "xlsx"), XML("application/xml", "xml"), ZIP("application/zip", "zip");
 
   private String mimeType;
 
