@@ -30,6 +30,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.projectforge.common.BeanHelper;
+import org.projectforge.common.Logger;
+import org.projectforge.shared.storage.StorageUtils;
 
 /**
  * @author Kai Reinhard (k.reinhard@micromata.de)
@@ -38,22 +40,36 @@ public class PropUtils
 {
   private static Field[] EMPTY_FIELDS = new Field[0];
 
-  private static final org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(PropUtils.class);
+  private static final Logger log = Logger.getLogger(StorageUtils.class);
 
   private static final Map<Class< ? >, Field[]> fieldsMap = new HashMap<Class< ? >, Field[]>();
 
   public static PropertyInfo get(final Class< ? > clazz, final String property)
   {
-    final Field[] fields = getPropertyInfoFields(clazz);
-    if (fields == null) {
-      log.error("No fields found for '" + clazz.getName() + "'!");
+    final Field field = getField(clazz, property);
+    if (field != null) {
+      return field.getAnnotation(PropertyInfo.class);
+    }
+    return null;
+  }
+
+  public static PropertyInfo get(final Field field)
+  {
+    if (field == null) {
       return null;
     }
-    for (final Field field : fields) {
-      if (field.getName().equals(property) == true) {
-        return field.getAnnotation(PropertyInfo.class);
+    return field.getAnnotation(PropertyInfo.class);
+  }
+
+  public static Field getField(final Class< ? > clazz, final String property)
+  {
+    final Field[] declaredFields = BeanHelper.getAllDeclaredFields(clazz);
+    for (final Field field : declaredFields) {
+      if (property.equals(field.getName()) == true) {
+        return field;
       }
     }
+    log.warn("Field '" + clazz.getName() + "." + property + "' not found.");
     return null;
   }
 
