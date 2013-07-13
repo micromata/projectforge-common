@@ -84,9 +84,23 @@ public class BeanHelper
 
   public static Method determineGetter(final Class< ? > clazz, final String fieldname)
   {
+    return determineGetter(clazz, fieldname, true);
+  }
+
+  /**
+   * @param clazz
+   * @param fieldname
+   * @param onlyPublicGetter true is default.
+   * @return
+   */
+  public static Method determineGetter(final Class< ? > clazz, final String fieldname, final boolean onlyPublicGetter)
+  {
     final String cap = StringUtils.capitalize(fieldname);
-    final Method[] methods = clazz.getMethods();
+    final Method[] methods = getAllDeclaredMethods(clazz);
     for (final Method method : methods) {
+      if (onlyPublicGetter == true && Modifier.isPublic(method.getModifiers()) == false) {
+        continue;
+      }
       if (("get" + cap).equals(method.getName()) == true || ("is" + cap).equals(method.getName()) == true) {
         if (method.isBridge() == false) {
           // Don't return bridged methods (methods defined in interface or super class with different return type).
@@ -105,7 +119,24 @@ public class BeanHelper
    */
   public static List<Method> getAllGetterMethods(final Class< ? > clazz)
   {
-    final Method[] methods = clazz.getMethods();
+    return getAllGetterMethods(clazz, true);
+  }
+
+  /**
+   * Return all methods starting with 'get*' or 'is*' without parameters and non-bridged of given class and all interfaces and super
+   * classes.
+   * @param clazz
+   * @param includingSuperClasses default is true.
+   * @return
+   */
+  public static List<Method> getAllGetterMethods(final Class< ? > clazz, final boolean includingSuperClasses)
+  {
+    final Method[] methods;
+    if (includingSuperClasses == true) {
+      methods = getAllDeclaredMethods(clazz);
+    } else {
+      methods = clazz.getDeclaredMethods();
+    }
     final List<Method> list = new LinkedList<Method>();
     for (final Method method : methods) {
       final String name = method.getName();
@@ -352,6 +383,22 @@ public class BeanHelper
   }
 
   /**
+   * Return all methods declared by the given class and all super classes.
+   * @param clazz
+   * @return
+   * @see Class#getDeclaredMethods()
+   */
+  public static Method[] getAllDeclaredMethods(Class< ? > clazz)
+  {
+    Method[] methods = clazz.getDeclaredMethods();
+    while (clazz.getSuperclass() != null) {
+      clazz = clazz.getSuperclass();
+      methods = (Method[]) ArrayUtils.addAll(methods, clazz.getDeclaredMethods());
+    }
+    return methods;
+  }
+
+  /**
    * Invokes getter method of the given bean.
    * @param bean
    * @param property
@@ -430,7 +477,7 @@ public class BeanHelper
       return null;
     }
     if (value instanceof Collection< ? > == true) {
-      return get((Collection<?>)value, index);
+      return get((Collection< ? >) value, index);
     } else if (value.getClass().isArray() == true) {
       return Array.get(value, index);
     }
@@ -625,8 +672,9 @@ public class BeanHelper
     return true;
   }
 
-  static Object get(final Collection<?> col, final int index) {
-    final Iterator<?> it = col.iterator();
+  static Object get(final Collection< ? > col, final int index)
+  {
+    final Iterator< ? > it = col.iterator();
     for (int i = 0; i < index; i++) {
       it.next();
     }
