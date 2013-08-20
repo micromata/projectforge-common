@@ -26,7 +26,9 @@ package org.projectforge.common;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -37,6 +39,8 @@ import org.apache.commons.lang.StringUtils;
  */
 public class CSVParser
 {
+  private static final Logger log = Logger.getLogger(CSVParser.class);
+
   private char csvSeparatorChar = CSVWriter.DEFAULT_CSV_SEPARATOR_CHAR;
 
   public static final String ERROR_UNEXPECTED_QUOTATIONMARK = "Unexpected quotation mark \" (only allowed in quoted cells).";
@@ -46,13 +50,13 @@ public class CSVParser
   public static final String ERROR_DELIMITER_OR_NEW_LINE_EXPECTED_AFTER_QUOTATION_MARK = "Delimter or new line expected after quotation mark.";
 
   public static final String ERROR_UNEXPECTED_CHARACTER_AFTER_QUOTATION_MARK = "Unexpected character after quotation mark.";
-  
+
   public enum Type
   {
     EOF, EOL, CHAR
   }
 
-  private Reader source;
+  private final Reader source;
 
   private Type type;
 
@@ -64,13 +68,58 @@ public class CSVParser
 
   private char cval;
 
-  private int pushbackBuffer[] = new int[5];
+  private final int pushbackBuffer[] = new int[5];
 
   private int pushbackIndex = -1;
 
-  public CSVParser(Reader source)
+  private Map<String, Integer> colMap;
+
+  public CSVParser(final Reader source)
   {
     this.source = source;
+  }
+
+  /**
+   * Parses the first (next) line and returns the cells as string. Stores also the col numbers of the head cols for .
+   * @return
+   * @see #parseLine()
+   * @see #getCell(List, String)
+   */
+  public List<String> parseHeadCols()
+  {
+    final List<String> cells = parseLine();
+    if (cells == null) {
+      return null;
+    }
+    colMap = new HashMap<String, Integer>();
+    for (int i = 0; i < cells.size(); i++) {
+      colMap.put(cells.get(i), i);
+    }
+    return cells;
+  }
+
+  /**
+   * Get the cell with the given colname (head cols had to be parsed first via {@link #parseHeadCols()}.
+   * @param cells
+   * @param colname
+   * @return cell content
+   */
+  public String getCell(final List<String> cells, final String colname)
+  {
+    if (colMap == null) {
+      log.error("No head cols given (may-be parseHeadCols() wasn't called before)!");
+      return null;
+    }
+    final Integer idx = colMap.get(colname);
+    if (idx == null) {
+      log.error("No head col with name '" + colname + "' found by parseHeadCols()!");
+      return null;
+    }
+    if (idx >= cells.size()) {
+      log.error("Index " + idx + " of colname '" + colname + "' out of index (>=" + cells.size() + ") in line " + lineno);
+      return null;
+    }
+    return cells.get(idx);
   }
 
   /**
@@ -84,7 +133,7 @@ public class CSVParser
     }
     List<String> result = null;
     do {
-      String cell = parseCell();
+      final String cell = parseCell();
       if (cell != null) {
         if (result == null) {
           result = new ArrayList<String>();
@@ -107,7 +156,7 @@ public class CSVParser
       quoted = true; // value is quoted.
       nextToken();
     }
-    StringBuffer buf = new StringBuffer();
+    final StringBuffer buf = new StringBuffer();
     while (true) {
       if (type != Type.CHAR) {
         if (quoted == true) {
@@ -144,23 +193,24 @@ public class CSVParser
     }
     return buf.toString();
   }
-  
+
   public void setCsvSeparatorChar(final char csvSeparatorChar)
   {
     this.csvSeparatorChar = csvSeparatorChar;
   }
 
-  private String createMessage(String msg, String s)
+  private String createMessage(final String msg, final String s)
   {
     return createMessage(msg, s, lineno, colno);
   }
 
-  private String createMessage(String msg)
+  private String createMessage(final String msg)
   {
     return createMessage(msg, null, lineno, colno);
   }
-  
-  static String createMessage(String msg, String s, int line, int col) {
+
+  static String createMessage(final String msg, final String s, final int line, final int col)
+  {
     return msg + " Error in line: " + line + " (" + col + ")" + (StringUtils.isNotBlank(s) ? ": " + s : "");
   }
 
@@ -183,7 +233,7 @@ public class CSVParser
     return lineno;
   }
 
-  public boolean isIdentifierPart(char ch)
+  public boolean isIdentifierPart(final char ch)
   {
     return Character.isUnicodeIdentifierPart(ch);
   }
@@ -199,7 +249,7 @@ public class CSVParser
       colno = 0;
       return type;
     }
-    char c = (char) val;
+    final char c = (char) val;
     if (c == '\r') {
       val = read();
       if (val == -1) {
@@ -221,7 +271,7 @@ public class CSVParser
     return type;
   }
 
-  public void unread(int b)
+  public void unread(final int b)
   {
     if (b == '\n') {
       lineno--;
@@ -245,7 +295,7 @@ public class CSVParser
     } else {
       try {
         b = source.read();
-      } catch (IOException ex) {
+      } catch (final IOException ex) {
         throw new RuntimeException("IOException in line: " + lineno, ex);
       }
     }
