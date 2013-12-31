@@ -4,7 +4,7 @@
 //
 // Project   ProjectForge
 //
-// Copyright 2001-2013, Kai Reinhard
+// Copyright 2001-2014, Kai Reinhard
 //           Dual-licensed.
 //
 /////////////////////////////////////////////////////////////////////////////
@@ -15,12 +15,12 @@ public class ProjectForgeVersion
 {
   public static final String APP_ID = "ProjectForge";
 
-  public static final String YEAR = "2013";
+  public static final String YEAR = "2014";
 
-  public static final String VERSION_STRING = "5.2.1-SNAPSHOT";
+  public static final String VERSION_STRING = "5.3.1-SNAPSHOT";
 
-  public static final String RELEASE_DATE = "2013-07-07";
+  public static final String RELEASE_DATE = "2013-12-31";
 
-  public static final String RELEASE_TIMESTAMP = "2013-07-07 09:59";
+  public static final String RELEASE_TIMESTAMP = "2013-12-31 01:38";
 
 }
