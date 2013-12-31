@@ -21,6 +21,6 @@ public class ProjectForgeVersion
 
   public static final String RELEASE_DATE = "2013-12-30";
 
-  public static final String RELEASE_TIMESTAMP = "2013-12-30 10:46";
+  public static final String RELEASE_TIMESTAMP = "2013-12-30 16:23";
 
 }
