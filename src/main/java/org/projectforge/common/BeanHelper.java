@@ -74,7 +74,7 @@ public class BeanHelper
   public static String determinePropertyName(final Method method)
   {
     final String name = method.getName();
-    if (name.startsWith("get") == true || name.startsWith("set") == true) {
+    if (name.startsWith("get") == true || name.startsWith("set") == true || name.startsWith("has") == true) {
       return StringUtils.uncapitalize(name.substring(3));
     } else if (name.startsWith("is") == true) {
       return StringUtils.uncapitalize(name.substring(2));
@@ -101,7 +101,15 @@ public class BeanHelper
       if (onlyPublicGetter == true && Modifier.isPublic(method.getModifiers()) == false) {
         continue;
       }
-      if (("get" + cap).equals(method.getName()) == true || ("is" + cap).equals(method.getName()) == true) {
+      boolean matches = false;
+      if (boolean.class.isAssignableFrom(method.getReturnType()) == true) {
+        matches = ("is" + cap).equals(method.getName()) == true
+            || ("has" + cap).equals(method.getName()) == true
+            || ("get" + cap).equals(method.getName()) == true;
+      } else {
+        matches = ("get" + cap).equals(method.getName()) == true;
+      }
+      if (matches == true) {
         if (method.isBridge() == false) {
           // Don't return bridged methods (methods defined in interface or super class with different return type).
           return method;
@@ -141,7 +149,8 @@ public class BeanHelper
     for (final Method method : methods) {
       final String name = method.getName();
       if (name.startsWith("get") == true && name.length() > 3 || //
-          name.startsWith("is") == true
+          name.startsWith("has") == true
+          || name.startsWith("is") == true
           && name.length() > 2) {
         if (method.getParameterTypes().length == 0 && method.isBridge() == false) {
           // Don't return bridged methods (methods defined in interface or super class with different return type).
@@ -160,7 +169,7 @@ public class BeanHelper
   {
     final String name = method.getName();
     int pos = 0;
-    if (name.startsWith("get") == true && name.length() > 3) {
+    if ((name.startsWith("get") == true || name.startsWith("has") == true) && name.length() > 3) {
       pos = 3;
     } else if (name.startsWith("is") == true && name.length() > 2) {
       pos = 2;
@@ -177,7 +186,7 @@ public class BeanHelper
       return null;
     }
     final String name = method.getName();
-    if (name.startsWith("get") == false && name.startsWith("is") == false) {
+    if (name.startsWith("get") == false && name.startsWith("is") == false && name.startsWith("has") == false) {
       throw new UnsupportedOperationException("determinePropertyType only yet implemented for getter methods.");
     }
     return method.getReturnType();
@@ -208,9 +217,9 @@ public class BeanHelper
       return method;
     } else {
       try {
-        if (name.startsWith("get") == true) {
+        if (name.startsWith("get") == true || name.startsWith("has") == true) {
           final Class< ? > parameterType = method.getReturnType();
-          final String setterName = "s" + name.substring(1);
+          final String setterName = "set" + name.substring(3);
           return clazz.getMethod(setterName, new Class[] { parameterType});
         } else if (name.startsWith("is") == true) {
           final Class< ? > parameterType = method.getReturnType();
